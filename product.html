@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Product</title>
+    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.4-web/css/all.min.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.get("http://localhost:6969/productCate", function (data, status) {
+                $('#content').html(data);
+            });
+
+            var user = localStorage.getItem("user");
+            if (user === null || user === undefined) {
+                $("#imgadd").attr("src", "/img/iconPeople.jpg");
+                $("#signin").css("display", "block");
+                $("#signout").css("display", "none");
+                $("#profile").css("display", "none");
+                $("#shoppingcart").css("display", "none");
+            }
+            else {
+                var objUser = JSON.parse(user)
+                $.get("http://localhost:6969/EditPersonal/" + objUser[0].ID, function (data, status) {
+                    $("#imgadd").attr("src", "/img/" + data.AnhDaiDien);
+                });
+                $("#signout").css("display", "block");
+                $("#profile").css("display", "block");
+                $("#signin").css("display", "none");
+                $("#shoppingcart").css("display", "block");
+                
+            }
+        });
+        function search() {
+            $.post("http://localhost:6969/search", {
+                search: $('#search').val(),
+            }, function (data, status) {
+                $('#content').html(data);
+                $('#anPT').css("display", "none");
+            });
+        }
+
+        function menuClick(catePro) {
+            $.post("http://localhost:6969/getProductMaDM", {
+                MaDM: catePro
+            }, function (data, status) {
+                $('#content').html(data);
+                $('#anPT').css("display", "none");
+            });
+        }
+
+        function menuClickPT(catePro) {
+            $.post("http://localhost:6969/getProductMaPT", {
+                MaPT: catePro
+            }, function (data, status) {
+                $('#content').html(data);
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+        }
+
+        function addtocart(productId) {
+            var user = localStorage.getItem("user");
+            if (user === null || user === undefined) {
+                swal({
+                    title: "Rất tiếc",
+                    text: "Vui lòng hãy đăng nhập!",
+                });
+            } else {
+                var arrProductId = localStorage.getItem("shoppingcart");
+                var img = ("src", "/img/kuriboh-addtocart.jpg");
+                if (arrProductId == null || arrProductId == undefined) {
+                    arrProductId = [productId];
+                } else {
+                    arrProductId = JSON.parse(arrProductId);
+                    if (arrProductId.indexOf(productId) == -1) {
+                        arrProductId.push(productId);
+                    }
+                    swal({
+                        title: "TỐT LẮM",
+                        text: "Thêm sản phẩm vào giỏ hàng thành công.",
+                        icon: img,
+                    });
+                }
+                arrProductId = JSON.stringify(arrProductId);
+                localStorage.setItem("shoppingcart", arrProductId);
+            }
+        }
+        function shoppingcart() {
+            window.location.href = "/shoppingcart";
+        }
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <nav>
+            <a href="/index"><img src="/img/konami-logo.png"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="/index">HOME</a></li>
+                    <li><a href="/product">PRODUCT</a></li>
+                    <li><a href="/blog">BLOG</a></li>
+                    <li><a href="/contact">CONTACT</a></li>
+                    <li class="dropdown">
+                        <img id="imgadd" onclick="logout()">
+                        <ul class="submenu">
+                            <li id="signin"><a href="/login" onclick="logout()" class="dropdown-menu">SignIn</a></li>
+                            <li id="profile" style="display: none; text-align: center;"><a href="/profile" class="dropdown-menu">ProFile</a></li>
+                            <li id="signout" style="display: none; text-align: center;"><a href="/login"
+                                    onclick="logout()" class="dropdown-menu">SignOut</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div id="shoppingcart" onclick="shoppingcart()"><i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="paragraph">
+            <h1>Yu-Gi-Oh PRODUCT CATEGORY</h1><br>
+            <h2>Last Update: March 23rd 2020</h2><br>
+            <p>This product catalog will help you find the latest and greatest cards through which will help you become
+                the number one duelist in the world.<br> Next, you must try to gain advantage with a series of tactical
+                decisions, using all the cards in your hand and on the table to race against your opponent.<br> If you
+                want to weaken your opponent's force, <br>you can send your allies to fight the enemy on the opponent's
+                side, taking hard versus hard.<br> On the other hand, you can choose to use your followers to collect
+                more Æmbers.</p>
+        </div>
+        <div class="search">
+            <input type="text" id="search" placeholder="Search Card or Deck You Want">
+            <input type="button" class="search-btn" value="Search" onclick="search()"></input>
+        </div>
+    </header>
+    <section class="u-section-1">
+        <div class="u-sheet-1">
+            <h1 class="u-text-1">DANH MỤC SẢN PHẨM</h1>
+            <div class="u-layout-wrap-1">
+                <div class="u-layout-cell-1">
+                    <div class="cateTable">
+                        <ul class="ul">
+                            <li class="li">
+                                <a href="/product" style="color: white;">All Product</a>
+                            </li>
+                            <li class="li">
+                                <span onclick="menuClick('1')">Card Normal</span>
+                            </li>
+                            <li class="li">
+                                <span onclick="menuClick('2')">Spell Card</span>
+                            </li>
+                            <li class="li">
+                                <span onclick="menuClick('3')">Trap Card</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="content"></div>
+                    <div class="cateTable1" id="anPT">
+                        <ul class="ul1">
+                            <li class="li1">
+                                <span onclick="menuClickPT('2')">1</span>
+                            </li>
+                            <li class="li1">
+                                <span onclick="menuClickPT('3')">2</span>
+                            </li>
+                            <li class="li1">
+                                <span onclick="menuClickPT('4')">3</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <footer>
+        <div class="row">
+            <div class="col">
+                <img class="img" src="/img/konami-logo.png">
+                <p>Konami Shop - sự lựa chọn uy tín nhất cho mọi duelist. Mở bán trên toàn quốc gia và vũng lãnh thổ
+                    trong các ngày trong tuần từ 8h-20h. Hãy đặt mua những lá bài mà bạn cảm thấy ưa thích nhất và sở
+                    hữu nó để trở thành một duelist số 1.</p>
+            </div>
+            <div class="col">
+                <h3>Thông Tin</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Số 69/68 Đặng Thùy Trâm P13 Q.Bình Thạnh TPHCM.</p>
+                <p><i class="far fa-id-card"></i> (+84) 917508594</p>
+                <p class="email-id">hao.207pm27398@gmail.com.vn</p>
+            </div>
+            <div class="col">
+                <h3>Liên Hệ</h3>
+                <div class="social-icons">
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

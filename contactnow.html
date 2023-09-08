@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Contact Us</title>
+    <link rel="stylesheet" href="/css/contactnow.css">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.4-web/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // $.get("http://localhost:6969/contactnow", function (data, status) {
+            //     $('#content').html(data);
+            // });
+
+            var user = localStorage.getItem("user");
+            if (user === null || user === undefined) {
+                $("#imgadd").attr("src", "/img/iconPeople.jpg");
+                $("#signin").css("display", "block");
+                $("#signout").css("display", "none");
+                $("#profile").css("display", "none");
+                $("#shoppingcart").css("display", "none");
+            }
+            else {
+                var objUser = JSON.parse(user)
+                $.get("http://localhost:6969/EditPersonal/" + objUser[0].ID, function (data, status) {
+                    $("#imgadd").attr("src", "/img/" + data.AnhDaiDien);
+                });
+                $("#signout").css("display", "block");
+                $("#profile").css("display", "block");
+                $("#signin").css("display", "none");
+                $("#shoppingcart").css("display", "block");
+                
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+        }
+
+        function shoppingcart() {
+            window.location.href = "/shoppingcart";
+        }
+
+        function ContactUs() {
+            $.post("/ContactUs", {
+                Name: $("#Name").val(),
+                Phone: $("#Phone").val(),
+                Email: $("#Email").val(),
+                NoidungLH: $("#Message").val()
+            },
+                function (data, status) {
+                    // localStorage.setItem("user", JSON.stringify(data));
+                    alert("Đã gửi liên hệ. Cảm ơn bạn.");
+                    window.location.href = "/contact";
+                }
+            );
+        }
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <nav>
+            <a href="/index"><img src="/img/konami-logo.png"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="/index">HOME</a></li>
+                    <li><a href="/product">PRODUCT</a></li>
+                    <li><a href="/blog">BLOG</a></li>
+                    <li><a href="/contact">CONTACT</a></li>
+                    <li class="dropdown">
+                        <img id="imgadd">
+                        <ul class="submenu">
+                            <li id="signin"><a href="/login" onclick="logout()" class="dropdown-menu">SignIn</a></li>
+                            <li id="profile" style="display: none; text-align: center;"><a href="/profile"
+                                    class="dropdown-menu">ProFile</a></li>
+                            <li id="signout" style="display: none; text-align: center;"><a href="/login"
+                                    onclick="logout()" class="dropdown-menu">SignOut</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div id="shoppingcart" onclick="shoppingcart()"><i class="fas fa-shopping-cart"></i></div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <img class="images" src="/img/contactus-yugioh.jpg">
+    <div class="wrapper">
+        <h1>Contact Us</h1>
+        <form>
+            <div class="name-num">
+                <input type="text" id="Name" required placeholder="Your Name">
+                <input class="num-in" type="text" id="Phone" required placeholder="Phone No.">
+            </div>
+            <input type="email" id="Email" required placeholder="Your Email">
+            <textarea cols="30" rows="10" id="Message" required placeholder="Your Message"></textarea>
+            <input id="btn-contactus" type="button" onclick="ContactUs()" value="Send" />
+        </form>
+    </div>
+
+
+
+
+    <footer>
+        <div class="row">
+            <div class="col">
+                <img class="img" src="/img/konami-logo.png">
+                <p>Konami Shop - sự lựa chọn uy tín nhất cho mọi duelist. Mở bán trên toàn quốc gia và vũng lãnh thổ
+                    trong các ngày trong tuần từ 8h-20h. Hãy đặt mua những lá bài mà bạn cảm thấy ưa thích nhất và sở
+                    hữu nó để trở thành một duelist số 1.</p>
+            </div>
+            <div class="col">
+                <h3>Thông Tin</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Số 69/68 Đặng Thùy Trâm P13 Q.Bình Thạnh TPHCM.</p>
+                <p><i class="far fa-id-card"></i> (+84) 917508594</p>
+                <p class="email-id">hao.207pm27398@gmail.com.vn</p>
+            </div>
+            <div class="col">
+                <h3>Liên Hệ</h3>
+                <div class="social-icons">
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

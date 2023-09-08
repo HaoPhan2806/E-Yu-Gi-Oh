@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<title>Page Detail Blog</title>
+
+<head>
+    <link rel="stylesheet" href="/css/detailblog.css">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.4-web/css/all.min.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            var arr = window.location.href.split('/');
+            $.get("http://localhost:6969/detaildata_blog/" + arr[arr.length - 1], function (data, status) {
+                $("#tieudett").html(data.TIEUDETT);
+                $("#noidungtt1").html(data.NOIDUNGTT1);
+                $("#anhtt1").attr("src", "/img/" + data.ANHTT1);
+                $("#noidungtt2").html(data.NOIDUNGTT2);
+                $("#anhtt2").attr("src", "/img/" + data.ANHTT2);
+                $("#noidungtt3").html(data.NOIDUNGTT3);
+                $("#anhtt3").attr("src", "/img/" + data.ANHTT3);
+            });
+
+            var user = localStorage.getItem("user");
+            if (user === null || user === undefined) {
+                $("#imgadd").attr("src", "/img/iconPeople.jpg");
+                $("#signin").css("display", "block");
+                $("#signout").css("display", "none");
+                $("#profile").css("display", "none");
+                $("#xetquyen").css("display", "block");
+                $("#quyencom").css("display", "none");
+            }
+            else {
+                var objUser = JSON.parse(user)
+                $.get("http://localhost:6969/EditPersonal/" + objUser[0].ID, function (data, status) {
+                    $("#imgadd").attr("src", "/img/" + data.AnhDaiDien);
+                });
+                $("#signout").css("display", "block");
+                $("#profile").css("display", "block");
+                $("#signin").css("display", "none");
+                $("#quyencom").css("display", "block");
+                $("#xetquyen").css("display", "none");
+            }
+
+
+            $.post("/ShowComBlog", {
+                MaTT: arr[arr.length - 1]
+            }, function (data, status) {
+                var user = localStorage.getItem("user");
+                var objUser = JSON.parse(user)
+                if (user === null || user === undefined) {
+                    $("#imgadd1").attr("src", "/img/iconPeople.jpg");
+                }
+                else {
+                    var objUser = JSON.parse(user)
+                    $.get("http://localhost:6969/EditPersonal/" + objUser[0].ID, function (data, status) {
+                        $("#imgadd1").attr("src", "/img/" + data.AnhDaiDien);
+
+                    });
+                    $("#HoTenND").html(objUser[0].HoTenND);
+                }
+                $("#content").html(data);
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+        }
+
+        function shoppingcart() {
+            window.location.href = "/shoppingcart";
+        }
+
+        function CommentBlog() {
+            var arr = window.location.href.split('/');
+            var user = localStorage.getItem("user");
+            var objUser = JSON.parse(user)
+            $.post("/getComment", {
+                HoTenND: (objUser[0].HoTenND),
+                NoiDungCM: $("#NoiDungCM").val(),
+                MaTT: arr[arr.length - 1]
+            },
+                function (data, status) {
+                    var arr = window.location.href.split('/');
+                    alert("Cảm ơn bạn đã bình luận.");
+                    window.location.href = "/detail_blog/" + arr[arr.length - 1];
+                }
+            );
+        }
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav-1">
+            <a href="/index"><img src="/img/konami-logo.png"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="/index">HOME</a></li>
+                    <li><a href="/product">PRODUCT</a></li>
+                    <li><a href="/blog">BLOG</a></li>
+                    <li><a href="/contact">CONTACT</a></li>
+                    <li class="dropdown">
+                        <img id="imgadd" onclick="logout()">
+                        <ul class="submenu">
+                            <li id="signin"><a href="/login" onclick="logout()" class="dropdown-menu">SignIn</a></li>
+                            <li id="profile" style="display: none; text-align: center;"><a href="/profile"
+                                    class="dropdown-menu">ProFile</a></li>
+                            <li id="signout" style="display: none; text-align: center;"><a href="/login"
+                                    onclick="logout()" class="dropdown-menu">SignOut</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div id="shoppingcart" onclick="shoppingcart()"><i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <section>
+        <div id='trangtintuc'>
+            <div class='noidungtrongtt'>
+                <h1 id='tieudett' class="mt-2"></h1>
+                <hr>
+                <p id='noidungtt1' class="mt-2"></p>
+                <img id='anhtt1' class="mt-2">
+                <p id='noidungtt2' class="mt-2"></p>
+                <img id='anhtt2' class="mt-2">
+                <p id='noidungtt3' class="mt-2"></p>
+                <img id='anhtt3' class="mt-2">
+                <h1>Bình Luận</h1>
+                <div id="xetquyen">
+                    <input class="button" type="button" value="Vui lòng đăng nhập để bình luận!" onclick="logout()" />
+                </div>
+                <div id="quyencom" class="com">
+                    <img id="imgadd1" />
+                    <div class="ml-1">
+                        <div id="HoTenND"></div>
+                        <input type="text" placeholder="Your Comment" id="NoiDungCM">
+                        <input type="button" onclick="CommentBlog()" id="button" value="COMMENT" />
+                    </div>
+                </div>
+                <hr>
+                <div id="content"></div>
+                <hr>
+                <div>
+                    <button class="back"><a href="/blog">&lt; Quay về</a></button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+    <footer>
+        <div class="row">
+            <div class="col">
+                <img class="img" src="/img/konami-logo.png">
+                <p>Konami Shop - sự lựa chọn uy tín nhất cho mọi duelist. Mở bán trên toàn quốc gia và vũng lãnh thổ
+                    trong các ngày trong tuần từ 8h-20h. Hãy đặt mua những lá bài mà bạn cảm thấy ưa thích nhất và sở
+                    hữu nó để trở thành một duelist số 1.</p>
+            </div>
+            <div class="col">
+                <h3>Thông Tin</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Số 69/68 Đặng Thùy Trâm P13 Q.Bình Thạnh TPHCM.</p>
+                <p><i class="far fa-id-card"></i> (+84) 917508594</p>
+                <p class="email-id">hao.207pm27398@gmail.com.vn</p>
+            </div>
+            <div class="col">
+                <h3>Liên Hệ</h3>
+                <div class="social-icons">
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Shopping Cart</title>
+    <link rel="stylesheet" href="/css/shoppingcart.css">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.4-web/css/all.min.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function getShoppingcart() {
+            if (localStorage.getItem("shoppingcart") == null || localStorage.getItem("shoppingcart") == undefined || localStorage.getItem("shoppingcart") == "[]") {
+                $('#content').html("Products in the cart are currently not available!");
+                $('#buynow').css("display", "none");
+                $('#delteAllProduct').css("display", "none");
+                $('#gotoProduct').css("display", "block");
+                TongTien();
+            }
+            else {
+                $.post("/getShoppingcart", {
+                    arrProductId: localStorage.getItem("shoppingcart").replace('[', '(').replace(']', ')')
+                }, function (data, status) {
+                    $('#content').html(data);
+                    $('#buynow').css("display", "block");
+                    $('#delteAllProduct').css("display", "block");
+                    $('#gotoProduct').css("display", "none");
+                    TongTien();
+                });
+            }
+
+        }
+
+        function logout() {
+            localStorage.removeItem("user")
+            window.location.href = "/login";
+        }
+
+        function deleteProCart(productid) {
+            var arrSP = JSON.parse(localStorage.getItem("shoppingcart"));
+            var arrSP2 = [];
+            var img = ("src", "/img/QuestionYuGiOh.jpg");
+            var imgdone = ("src", "/img/DoneDelete.jpg");
+            swal({
+                title: "Bạn có muốn thật sự xóa sản phẩm ?",
+                icon: img,
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    swal("Sản phẩm của bạn đã được xóa.", {
+                        icon: imgdone,
+                    });
+                    arrSP.forEach((item) => {
+                        if (item != productid) {
+                            arrSP2.push(item);
+                        }
+                    });
+                    localStorage.setItem("shoppingcart", JSON.stringify(arrSP2));
+                    getShoppingcart();
+                }
+            });
+        }
+
+        function buyProduct() {
+            var arrSP = [];
+            tongtien = 0
+            $(".product").toArray().forEach(item => {
+                arrSP.push({
+                    MaSP: $(item).attr("productid"),
+                    SoLuong: $(item).find(".soluong").val(),
+                    GiaBan: $(item).attr("price"),
+                })
+                tongtien += $(item).attr("price") * $(item).find(".soluong").val();
+            });
+            $.post("/buyProducts", {
+                MaKH: JSON.parse(localStorage.getItem("user"))[0].ID,
+                arrSP: arrSP
+            }, function (data, status) {
+                // $('#thanhtoan').html(tongtien);
+                alert("Thanh toán thành công.");
+                localStorage.removeItem("shoppingcart")
+                window.location.href = "/detailBuyNow";
+            });
+
+        }
+        function TongTien(){
+            var arrSP = [];
+            tongtien = 0
+            $(".product").toArray().forEach(item => {
+                arrSP.push({
+                    MaSP: $(item).attr("productid"),
+                    SoLuong: $(item).find(".soluong").val(),
+                    GiaBan: $(item).attr("price"),
+                })
+                tongtien += $(item).attr("price") * $(item).find(".soluong").val();
+            });
+            $('#thanhtoan').html(tongtien);
+        }
+
+        function DeleteAll(){
+            var img = ("src", "/img/QuestionYuGiOh.jpg");
+            var imgdone = ("src", "/img/DoneDelete.jpg");
+            swal({
+                title: "Bạn có muốn xóa tất sản phẩm?",
+                icon: img,
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    swal("Tất cả sản phẩm trong giỏ hàng đã xóa.", {
+                        icon: imgdone,
+                    });
+                    localStorage.removeItem("shoppingcart");
+                    getShoppingcart();
+                }
+            });
+
+        }
+
+
+        $(document).ready(function () {
+            getShoppingcart();
+
+            var user = localStorage.getItem("user");
+            if (user === null || user === undefined) {
+                $("#imgadd").attr("src", "/img/iconPeople.jpg");
+                $("#signin").css("display", "block");
+                $("#signout").css("display", "none");
+                $("#profile").css("display", "none");
+                $("#shoppingcart").css("display", "none");
+            }
+            else {
+                var objUser = JSON.parse(user)
+                $.get("http://localhost:6969/EditPersonal/" + objUser[0].ID, function (data, status) {
+                    $("#imgadd").attr("src", "/img/" + data.AnhDaiDien);
+                });
+                $("#signout").css("display", "block");
+                $("#profile").css("display", "block");
+                $("#signin").css("display", "none");
+                $("#shoppingcart").css("display", "block");
+                
+            }
+        });
+
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/index"><img src="/img/konami-logo.png"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="/index">HOME</a></li>
+                    <li><a href="/product">PRODUCT</a></li>
+                    <li><a href="/blog">BLOG</a></li>
+                    <li><a href="/contact">CONTACT</a></li>
+                    <li class="dropdown">
+                        <img id="imgadd" onclick="logout()">
+                        <ul class="submenu">
+                            <li id="signin"><a href="/login" onclick="logout()" class="dropdown-menu">SignIn</a></li>
+                            <li id="profile" style="display: none; text-align: center;"><a href="/profile"
+                                    class="dropdown-menu">ProFile</a>
+                            </li>
+                            <li id="signout" style="display: none; text-align: center;"><a href="/login"
+                                    onclick="logout()" class="dropdown-menu">SignOut</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <section class="u-section-1">
+        <div class="u-sheet-1">
+            <div class="u-layout-wrap-1">
+                <div class="u-layout-cell-1">
+                    <h1 style="text-align: center; font-size: larger; font-size: 60px; margin-top: 35px;"><b>SHOPPING
+                            CART</b></h1>
+                    <div><a href="/detailBuyNow" id="buynow">BUY</a></div>
+                    <div class="Tongtien">Total: <span id="thanhtoan">0 </span> $</div>
+                    <div id="content"></div>
+                    <div><input id="delteAllProduct" type="button" value="DELETE ALL" onclick="DeleteAll()"></div>
+                    <div><a href="/product" id="gotoProduct">Go To Product >></a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="row">
+            <div class="col">
+                <img class="img" src="/img/konami-logo.png">
+                <p>Konami Shop - sự lựa chọn uy tín nhất cho mọi duelist. Mở bán trên toàn quốc gia và vũng lãnh thổ
+                    trong các ngày trong tuần từ 8h-20h. Hãy đặt mua những lá bài mà bạn cảm thấy ưa thích nhất và sở
+                    hữu nó để trở thành một duelist số 1.</p>
+            </div>
+            <div class="col">
+                <h3>Thông Tin</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Số 69/68 Đặng Thùy Trâm P13 Q.Bình Thạnh TPHCM.</p>
+                <p><i class="far fa-id-card"></i> (+84) 917508594</p>
+                <p class="email-id">hao.207pm27398@gmail.com.vn</p>
+            </div>
+            <div class="col">
+                <h3>Liên Hệ</h3>
+                <div class="social-icons">
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

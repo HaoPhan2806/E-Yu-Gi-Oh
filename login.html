@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Login</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.4-web/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function Login() {
+            if ($('#userName').val() == '') {
+                alert("Vui lòng nhập tài khoản!")
+                return 0;
+            }
+            if ($('#pass').val() == '') {
+                alert("Vui lòng nhập mật khẩu!")
+                return 0;
+            }
+            if ($('#userName').val() != '' && $('#pass').val() != '')
+                $.post("/getlogin", {
+                    userName: $('#userName').val(),
+                    pass: $('#pass').val()
+                }, function (data, status) {
+                    if (data.length === 0 || data === null) {
+                        alert("Đăng nhập thất bại! Hãy thử lại.");
+                    }
+                    else {
+                        localStorage.setItem("user", JSON.stringify(data));
+                        window.location.href = "/index";
+                    }
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="center">
+        <h1>Login</h1>
+        <form action="/getlogin" method="post">
+            <div class="txt_field">
+                <input type="text" id="userName" required>
+                <label><i class="fas fa-user"></i> Username</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" id="pass" required>
+                <label><i class="fas fa-lock"></i> Password</label>
+            </div>
+            <input type="submit" onclick="Login()" value="Login">
+            <div class="signup_link">
+                No account? Create one! <a href="/signup">Sign up</a>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

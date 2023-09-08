@@ -1,0 +1,257 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    box-sizing: border-box;
+    list-style-type: none;
+}
+.mr-1{
+    margin-right: 1em;
+}
+.header{
+    min-height: 115vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(4,9,30,0.7), rgba(4,9,30,0.7)), url(/img/background-shoppingcart.jpg);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+nav{
+    background-color: #b2591a;
+    display: flex;
+    padding: 2% 5%;
+    justify-content: space-between;
+    align-items: center;
+}
+nav img{
+    width: 200px;
+}
+.nav-links{
+    flex: 1;
+    text-align: right;
+}
+.nav-links ul li{
+    list-style: none;
+    display: inline-block;
+    padding: 5px 14px;
+    position: relative;
+}
+.nav-links ul li a {
+    color: #FFF;
+    text-decoration: none;
+    font-size: 28px;
+}
+.nav-links ul li a:hover{
+    color: blueviolet;
+}
+.nav-links ul li::after{
+    content: '';
+    width: 0%;
+    height: 5px;
+    background: #FF6666;
+    display: block;
+    margin: auto;
+    transition: 0.3s;
+}
+.nav-links ul li:hover::after{
+    width: 100%;
+}
+.dropdown-menu{
+    cursor: pointer;
+}
+#imgadd{
+    width:30px;
+    height:30px;
+    border-radius: 42px;
+    cursor: pointer;
+    padding: 0;
+}
+.dropdown{
+    position: relative;
+}
+.dropdown:hover .submenu{
+    display:block;
+}
+.submenu{
+    list-style: none;
+    padding: 0;
+    position: absolute;
+    left: -20px;
+    top: 100%;
+    display: none;
+    background: orange;
+}
+.submenu:hover{
+    color: white;
+}
+#shoppingcart{
+    content: '';
+    color: whitesmoke;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.paragraph{
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #FFF;
+}
+.paragraph h1{
+    font-size: 70px;
+    margin-top: 80px;
+}
+.paragraph p{
+    margin: 20px auto;
+    font-weight: 100;
+    line-height: 25px;
+}
+
+.u-section-1 .u-sheet-1{
+    min-height: 100vh;
+}
+.u-section-1 .u-text-1{
+    margin: 47px auto 70px 0;
+    padding: 5px 95px 1px;
+}
+.u-section-1 .u-btn-1 {
+    font-size: 15px;
+    background-image: none;
+    border-style: none;
+    margin: auto 20px 400px;
+    padding: 0;
+}
+.u-section-1 .u-layout-cell-1 {
+    min-height: 250vh;
+}
+
+#content-blog {
+    margin-top: 50px;
+    width: 1200px;
+    margin: 0px auto;
+}
+#p1{
+    margin: 70px;
+    display: flex;
+
+}
+#pi{
+    width: 350px;
+    height: 268px;
+}
+#ptb{
+    margin-left: 30px;
+    border: 1px solid #000;
+    padding: 10px;
+}
+#ptd{
+    color: #3d8dd2;
+    font-size: 2em;
+    max-height: 268px;
+}
+#ptd:hover, #a:hover{
+    color: #f00b0b;
+}
+#pp{
+    padding: 30px 0px 27px 0px;
+    font-size: 18px;
+    overflow: hidden;
+    max-height: 154px;
+}
+#a{
+    float: right;
+    padding-right: 7px;
+    color: #3d8dd2;
+    margin-top: 7px;
+}
+#a:after{
+    clear: both;
+}
+.cateTable{
+    border: 2px solid black;
+    background-color: #b2591a;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    padding: 2% 20%;
+}
+.ul{
+    cursor: pointer;
+    margin-left: 130px;
+}
+/* .ul:hover{
+    color: orange;
+} */
+.li{
+    border-radius: 10px;
+    border: 3px solid black;
+    float: left;
+    font-size: 30px;
+    margin-left: 40px;
+    color: white;
+    background: orange;
+}
+.li:hover{
+    background: lightgrey;
+}
+
+
+
+
+section{
+    min-height: 318px;
+}
+
+
+
+footer{
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    background: linear-gradient(to right, #00093c, #2d0b00);
+    color: #FFF;
+    padding: 20px 0 25px;
+    font-size: 13px;
+    line-height: 28px;
+}
+.img{
+    width: 200px;
+    margin-bottom: 30px;
+}
+.row{
+    width: 85%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.col{
+    flex-basis: 25%;
+    padding: 10px;
+}
+.col h3{
+    width: fit-content;
+    margin-bottom: 40px;
+    position: relative;
+    font-size: 30px;
+}
+.email-id{
+    width: fit-content;
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0;
+}
+.social-icons .fab{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    color: #000;
+    background: #FFF;
+    margin-right: 15px;
+    cursor: pointer;
+}
